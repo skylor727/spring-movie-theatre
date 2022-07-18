@@ -1,8 +1,11 @@
 package cinema;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 
@@ -18,7 +21,7 @@ public class Controller {
     //iterate array and if row & column = what im searching for return i
     //IF ROW * COLUMN FROM POST BODY IS > THEATRE.SEATLIST SIZE RETURN ERROR AS ITS OUT OF BOUNDS
     @PostMapping("/purchase")
-    public Seats purchase(@RequestBody Seats seat) {
+    public ResponseEntity purchase(@RequestBody Seats seat) {
         ArrayList<Seats> seats = theatre.getSeatList();
         int row = seat.getRow();
         int column = seat.getColumn();
@@ -30,7 +33,8 @@ public class Controller {
             int seatToCheckRow = seatToCheck.getRow();
             int seatToCheckColumn = seatToCheck.getColumn();
             if (seatToCheckRow * seatToCheckColumn > seats.size()) {
-                throw new OutOfBoundsException("The number of a row or column is out of bounds!");
+                Error error = new Error("The number of a row or column is out of bounds!");
+                return new ResponseEntity<Error>(error, HttpStatus.BAD_REQUEST);
             }
             if (row == seatToCheckRow && column == seatToCheckColumn) {
                 seatFound = true;
@@ -40,9 +44,10 @@ public class Controller {
         }
         if (seatFound) {
             seats.remove(seatIdx);
-            return seat;
+            return new ResponseEntity<Seats>(seat, HttpStatus.OK);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The ticket has been already purchased!");
+            Error error = new Error("The ticket has already been purchased!");
+            return new ResponseEntity<Error>(error, HttpStatus.BAD_REQUEST);
         }
     }
 }
