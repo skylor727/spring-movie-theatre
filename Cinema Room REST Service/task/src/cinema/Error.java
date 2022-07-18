@@ -10,11 +10,11 @@ public class Error {
         this.error = error;
     }
 
-    public String getMessage() {
+    public String getError() {
         return error;
     }
 
-    public void setMessage(String error) {
+    public void setError(String error) {
         this.error = error;
     }
 }

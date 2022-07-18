@@ -27,15 +27,15 @@ public class Controller {
         int column = seat.getColumn();
         int seatIdx = 0;
         boolean seatFound = false;
+        if (row * column > seats.size()) {
+            Error error = new Error("The number of a row or column is out of bounds!");
+            return new ResponseEntity<Error>(error, HttpStatus.BAD_REQUEST);
+        }
         //Iterating through the arraylist and searching for the seat sent in the post request and returning the index
         for (int i = 0; i < seats.size(); i++) {
             Seats seatToCheck = seats.get(i);
             int seatToCheckRow = seatToCheck.getRow();
             int seatToCheckColumn = seatToCheck.getColumn();
-            if (seatToCheckRow * seatToCheckColumn > seats.size()) {
-                Error error = new Error("The number of a row or column is out of bounds!");
-                return new ResponseEntity<Error>(error, HttpStatus.BAD_REQUEST);
-            }
             if (row == seatToCheckRow && column == seatToCheckColumn) {
                 seatFound = true;
                 seatIdx = i;
